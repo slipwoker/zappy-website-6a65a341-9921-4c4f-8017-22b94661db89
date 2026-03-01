@@ -1,47 +1,57 @@
-# Business — Generative Engine Optimization Map
+# unfold — Generative Engine Optimization Map
+
+> unfold is a creative sanctuary combining a physical sketchbook with a mobile app, designed to help artists overcome creative burnout. Each sketchbook page features a creative prompt, and artists can upload their interpretations to a supportive community app where they discover how others approached the same prompt. The brand embodies a soft, dreamy, hand-drawn aesthetic with watercolor textures, doodles, and a cozy storybook atmosphere—like opening a magical sketchbook filled with possibilities. It's a judgment-free space that celebrates every interpretation and helps artists rediscover the joy of creating without pressure or trends.
 
 ---
 
 ## Pages
 
 ### Home
-https://example.com
+https://unfold.zappy5.app
 Break free from creative burnout with unfold—a magical sketchbook and community app. Explore prompts, share your art, and find inspiration in a judgment-free sanctuary.
 
 ### Sketchbook
-https://example.com/sketchbook
+https://unfold.zappy5.app/sketchbook
 Every page sparks possibility. Our hand-drawn sketchbook features unique creative prompts designed to reignite your artistic passion without pressure or trends.
 
 ### Community
-https://example.com/community
+https://unfold.zappy5.app/community
 See how artists worldwide interpret the same prompts. Share your work, discover endless perspectives, and celebrate creativity in our supportive mobile community app.
 
 ### Contact
-https://example.com/contact
+https://unfold.zappy5.app/contact
 Questions about unfold? Want to join our creative movement? Reach out to our team and discover how we can help you overcome creative burnout together.
 
 ## Legal & Policy
 
 ### Privacy Policy
-https://example.com/privacy
+https://unfold.zappy5.app/privacy
 Information about how user data is collected, stored, and protected.
 
 ### Terms & Conditions
-https://example.com/terms
+https://unfold.zappy5.app/terms
 Legal terms describing service usage, rights, and policies.
 
 ### Accessibility Statement
-https://example.com/accessibility
+https://unfold.zappy5.app/accessibility
 Information about WCAG compliance and accessibility features.
 
 ---
 
 # Business Context (for LLM understanding)
 
-## About Business
+## About unfold
+unfold is a creative sanctuary combining a physical sketchbook with a mobile app, designed to help artists overcome creative burnout. Each sketchbook page features a creative prompt, and artists can upload their interpretations to a supportive community app where they discover how others approached the same prompt. The brand embodies a soft, dreamy, hand-drawn aesthetic with watercolor textures, doodles, and a cozy storybook atmosphere—like opening a magical sketchbook filled with possibilities. It's a judgment-free space that celebrates every interpretation and helps artists rediscover the joy of creating without pressure or trends.
+
+## Target Audience
+artists experiencing creative burnout who want a safe creative space without pressure
+
+## Industry
+creative tools and community platform
+
 ---
 
 # Additional Resources
 
-- **Sitemap**: https://example.com/sitemap.xml
-- **Robots.txt**: https://example.com/robots.txt
+- **Sitemap**: https://unfold.zappy5.app/sitemap.xml
+- **Robots.txt**: https://unfold.zappy5.app/robots.txt
