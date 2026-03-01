@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>Rediscover Your Creative Joy with unfold from Squarespace</title>
+    <meta name="description" content="Break free from creative burnout with unfold—a magical sketchbook and community app. Explore prompts, share your art, and find inspiration in a judgment-free sanctuary.">
+    <meta name="keywords" content="unfold from squarespace, square space unfold, creative burnout relief, artist sketchbook prompts, creative community app">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: '6a65a341-9921-4c4f-8017-22b94661db89',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="Rediscover Your Creative Joy with unfold from Squarespace">
+  <meta property="og:description" content="Break free from creative burnout with unfold—a magical sketchbook and community app. Explore prompts, share your art, and find inspiration in a judgment-free sanctuary.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Rediscover Your Creative Joy with unfold from Squarespace">
+  <meta name="twitter:description" content="Break free from creative burnout with unfold—a magical sketchbook and community app. Explore prompts, share your art, and find inspiration in a judgment-free sanctuary.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: #333 !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))), .sub-menu:not(:has(li)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .sub-menu.mobile-expanded { max-height: 500px !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-dark) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-dark) !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-dark) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      #mic-access-tool-general-button, .mic-access-tool-general-button,
+      #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+      ._access-icon, #mic-access-tool-box, .mic-access-tool-box,
+      #mic-init-access-tool #mic-access-tool-box, div[id*="mic-access-tool-box"], ._access-menu {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
+      }
+    </style>
+</head>
+<body>
+
+  <nav class="navbar">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+  
+  <button class="phone-header-btn" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+  
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link">
+        <img src="/assets/unfold-creative-tools-and-community-platform-logo.webp" alt="unfold" class="logo" />
+      </a>
+    </div>
+    
+    <ul class="nav-menu" id="navMenu"><li><a href="/sketchbook">Sketchbook</a></li><li><a href="/community">Community</a></li></ul>
+    
+    <div class="nav-cta-container">
+      <a href="/contact" class="nav-cta-btn">Contact</a>
+    </div>
+  </div>
+</nav>
+  
+  <main>
+    <section class="home-hero-section" data-layout-spec="Home-hero" data-hero-type="fullscreen-scrim">
+  <div class="home-hero-section__media-wrapper">
+    <img data-hero-bg="true" data-placeholder="home-hero-bg" data-context="Cozy creative workspace with an open unfold sketchbook on cream paper showing a visible creative prompt page, soft watercolor smudges in sage green and peachy coral, a wooden pencil resting on the page, warm natural daylight streaming through a window, gentle shadows, artistic desk setup with paint palette and brushes slightly blurred in background, dreamy and inviting atmosphere" width="1920" height="1080" src="/assets/site-home-hero-bg.webp" alt="Cozy desk with open unfold sketchbook and creative prompts" class="home-hero-section__bg-image">
+  </div>
+  
+  <div class="home-hero-section__scrim" aria-hidden="true"></div>
+  
+  <div class="home-hero-section__content-wrapper">
+    <div class="home-hero-section__overlay-card">
+      <h1 class="home-hero-section__headline">A gentle way back to making art.</h1>
+      <h3 class="home-hero-section__subtitle">unfold pairs a physical prompt sketchbook with a supportive community app—so you can create without pressure and feel inspired again.</h3>
+      <div class="home-hero-section__cta-group">
+        <a href="/contact" class="home-hero-section__btn home-hero-section__btn--primary">Explore unfold</a>
+        <a href="/contact" class="home-hero-section__btn home-hero-section__btn--secondary">See how it works</a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="home-hero-section__divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="home-hero-wash-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#FBF6EE;stop-"></stop>
+          <stop offset="45%" style="stop-color:#FBF6EE;stop-opacity:0.65"></stop>
+          <stop offset="100%" style="stop-color:#FBF6EE;stop-opacity:1"></stop>
+        </linearGradient>
+      </defs>
+      <path d="M0,80 L0,42 Q60,38 120,44 T240,40 Q300,45 360,38 T480,42 Q540,37 600,43 T720,39 Q780,44 840,40 T960,43 Q1020,38 1080,42 T1200,40 L1200,80 Z" fill="var(--bg-light)" opacity="0.95"></path>
+      <path d="M0,80 L0,50 Q50,46 100,52 T200,48 Q250,53 300,47 T400,51 Q450,46 500,52 T600,48 Q650,53 700,49 T800,52 Q850,47 900,51 T1000,49 Q1050,53 1100,50 T1200,52 L1200,80 Z" fill="var(--bg-light)"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="home-benefits-section" data-layout-spec="Home-benefits">
+  <div class="home-benefits-container">
+    <div class="home-benefits-intro">
+      <h2>Create without pressure.</h2>
+      <p>Small prompts. Real pages. A cozy rhythm that helps you start again.</p>
+    </div>
+    
+    <div class="home-benefits-grid">
+      <div class="home-benefits-card">
+        <svg class="home-benefits-doodle" data-no-icon-edit="true" aria-hidden="true" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 2L16.5 10.5L25 13L16.5 15.5L14 24L11.5 15.5L3 13L11.5 10.5L14 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h3>Prompts that unblock you.</h3>
+        <p>One page, one gentle direction—enough to begin, never enough to overwhelm.</p>
+      </div>
+      
+      <div class="home-benefits-card">
+        <svg class="home-benefits-doodle" data-no-icon-edit="true" aria-hidden="true" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 4C8.5 4 4 8.5 4 14C4 19.5 8.5 24 14 24C19.5 24 24 19.5 24 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+          <path d="M20 8L24 4M24 4L20 4M24 4L24 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h3>Your art stays yours.</h3>
+        <p>Share when you want; every interpretation is welcomed, from doodles to full pieces.</p>
+      </div>
+      
+      <div class="home-benefits-card">
+        <svg class="home-benefits-doodle" data-no-icon-edit="true" aria-hidden="true" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 18C16.7614 18 19 15.7614 19 13C19 10.2386 16.7614 8 14 8C11.2386 8 9 10.2386 9 13C9 15.7614 11.2386 18 14 18Z" stroke="currentColor" stroke-width="1.5"></path>
+          <path d="M7 13C7 13 4 16 4 19C4 21.2091 5.79086 23 8 23C10.2091 23 12 21.2091 12 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+          <path d="M21 13C21 13 24 16 24 19C24 21.2091 22.2091 23 20 23C17.7909 23 16 21.2091 16 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+        </svg>
+        <h3>Feel less alone.</h3>
+        <p>See how others approached the same prompt and rediscover possibility in variety.</p>
+      </div>
+    </div>
+    
+    <div class="home-benefits-backplate" aria-hidden="true"></div>
+  </div>
+  
+  <div class="home-benefits-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,80 L0,45 Q30,42 60,48 T120,44 Q150,50 180,45 T240,48 Q270,44 300,50 T360,46 Q390,52 420,48 T480,50 Q510,46 540,52 T600,48 Q630,54 660,50 T720,52 Q750,48 780,54 T840,50 Q870,56 900,52 T960,54 Q990,50 1020,56 T1080,52 Q1110,58 1140,54 T1200,56 L1200,80 Z" fill="var(--bg-light)"></path>
+      <path d="M0,80 L0,50 Q35,47 70,53 T140,49 Q175,55 210,50 T280,53 Q315,49 350,55 T420,51 Q455,57 490,53 T560,55 Q595,51 630,57 T700,53 Q735,59 770,55 T840,57 Q875,53 910,59 T980,55 Q1015,61 1050,57 T1120,59 Q1155,55 1190,61 L1200,80 Z" fill="var(--bg-light)" opacity="0.4"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="home-showcase-section" data-layout-spec="Home-showcase">
+  <div class="showcase-container">
+    <div class="showcase-content">
+      <h2>A simple loop: prompt → page → share.</h2>
+      <p>unfold gives you a tiny daily doorway back into art—then shows you you're not the only one creating this way.</p>
+      
+      <div class="showcase-steps">
+        <div class="step-item">
+          <h3>Open to today's prompt.</h3>
+          <p>Each page offers a clear, friendly starting point.</p>
+        </div>
+        
+        <div class="step-item">
+          <h3>Make your version.</h3>
+          <p>Sketch, paint, collage—whatever your hands can manage today.</p>
+        </div>
+        
+        <div class="step-item">
+          <h3>Discover others.</h3>
+          <p>The app collects interpretations of the same prompt so you can feel inspired, not compared.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="showcase-imagery">
+      <div class="image-wrapper">
+        <img data-placeholder="home-showcase-product" data-context="Overhead flat-lay photo of an open cream-colored sketchbook with hand-drawn watercolor prompts on the left page, and a modern smartphone on the right showing a community feed app interface with colorful art interpretations. Shot on a soft cream fabric surface with natural window light, warm and inviting atmosphere, soft shadows, cozy creative workspace aesthetic" width="600" height="700" src="/assets/site-home-showcase-product.webp" alt="unfold sketchbook and mobile app showing community feed">
+      </div>
+      <p class="image-caption">The sketchbook + community app working together to help you rediscover creative joy without pressure.</p>
+    </div>
+  </div>
+  
+  <div class="stitch-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,25 Q100,20 200,25 T400,25 Q450,30 500,35 Q550,40 600,35 Q650,30 700,25 T900,25 Q950,22 1000,25 T1150,25 L1160,28 L1165,32 L1168,28 L1170,24 L1172,28 L1174,32 L1176,36 L1178,32 L1180,28 L1182,32 L1184,36 L1186,40 L1188,44 L1186,48 L1184,52 L1182,48 L1180,44 L1178,48 L1176,52 L1174,48 L1172,44 L1170,48 L1168,52 L1166,48 L1164,44 L1162,40 L1160,36 L1158,32 L1156,28 L1154,24 L1152,28 L1150,32 L1148,28 L1146,24 L1144,20 L1142,24 L1140,28 L1138,32 L1136,28 L1134,24 L1132,28 L1130,32 L1128,36 L1126,40 L1124,36 L1122,32 L1120,36 L1118,40 L1116,44 L1114,40 L1112,36 L1110,32 L1108,28 L1106,24 L1104,20 L1102,16 L1100,12 L1098,16 L1096,20 L1094,24 L1092,28 L1090,32 L1088,36 L1086,40 L1084,44 L1082,48 L1080,44 L1078,40 L1076,44 L1074,48 L1072,44 L1070,40 L1068,36 L1066,32 L1064,28 L1062,24 L1060,20 L1058,24 L1056,28 L1054,24 L1052,20 L1050,24 L1048,28 L1046,32 L1044,36 L1042,40 L1040,36 L1038,32 L1036,36 L1034,40 L1032,44 L1030,48 L1028,44 L1026,40 L1024,36 L1022,32 L1020,28 L1018,24 L1016,20 L1014,24 L1012,28 L1010,32 L1008,28 L1006,24 L1004,20 L1002,16 L1000,12 L998,16 L996,20 L994,24 L992,28 L990,32 L988,36 L986,40 L984,44 L982,48 L980,44 L978,40 L976,36 L974,32 L972,28 L970,24 L968,20 L966,24 L964,28 L962,32 L960,36 L958,40 L956,44 L954,48 L952,44 L950,40 L948,36 L946,32 L944,28 L942,24 L940,20 L938,24 L936,28 L934,32 L932,36 L930,40 L928,44 L926,48 L924,44 L922,40 L920,36 L918,32 L916,28 L914,24 L912,20 L910,24 L908,28 L906,32 L904,36 L902,40 L900,44 L898,48 L896,44 L894,40 L892,36 L890,32 L888,28 L886,24 L884,20 L882,24 L880,28 L878,32 L876,36 L874,40 L872,44 L870,48 L868,44 L866,40 L864,36 L862,32 L860,28 L858,24 L856,20 L854,24 L852,28 L850,32 L848,36 L846,40 L844,44 L842,48 L840,44 L838,40 L836,36 L834,32 L832,28 L830,24 L828,20 L826,24 L824,28 L822,32 L820,36 L818,40 L816,44 L814,48 L812,44 L810,40 L808,36 L806,32 L804,28 L802,24 L800,20 L798,24 L796,28 L794,32 L792,36 L790,40 L788,44 L786,48 L784,44 L782,40 L780,36 L778,32 L776,28 L774,24 L772,20 L770,24 L768,28 L766,32 L764,36 L762,40 L760,44 L758,48 L756,44 L754,40 L752,36 L750,32 L748,28 L746,24 L744,20 L742,24 L740,28 L738,32 L736,36 L734,40 L732,44 L730,48 L728,44 L726,40 L724,36 L722,32 L720,28 L718,24 L716,20 L714,24 L712,28 L710,32 L708,36 L706,40 L704,44 L702,48 L700,44 L698,40 L696,36 L694,32 L692,28 L690,24 L688,20 L686,24 L684,28 L682,32 L680,36 L678,40 L676,44 L674,48 L672,44 L670,40 L668,36 L666,32 L664,28 L662,24 L660,20 L658,24 L656,28 L654,32 L652,36 L650,40 L648,44 L646,48 L644,44 L642,40 L640,36 L638,32 L636,28 L634,24 L632,20 L630,24 L628,28 L626,32 L624,36 L622,40 L620,44 L618,48 L616,44 L614,40 L612,36 L610,32 L608,28 L606,24 L604,20 L602,24 L600,28 L598,32 L596,36 L594,40 L592,44 L590,48 L588,44 L586,40 L584,36 L582,32 L580,28 L578,24 L576,20 L574,24 L572,28 L570,32 L568,36 L566,40 L564,44 L562,48 L560,44 L558,40 L556,36 L554,32 L552,28 L550,24 L548,20 L546,24 L544,28 L542,32 L540,36 L538,40 L536,44 L534,48 L532,44 L530,40 L528,36 L526,32 L524,28 L522,24 L520,20 L518,24 L516,28 L514,32 L512,36 L510,40 L508,44 L506,48 L504,44 L502,40 L500,36 L498,32 L496,28 L494,24 L492,20 L490,24 L488,28 L486,32 L484,36 L482,40 L480,44 L478,48 L476,44 L474,40 L472,36 L470,32 L468,28 L466,24 L464,20 L462,24 L460,28 L458,32 L456,36 L454,40 L452,44 L450,48 L448,44 L446,40 L444,36 L442,32 L440,28 L438,24 L436,20 L434,24 L432,28 L430,32 L428,36 L426,40 L424,44 L422,48 L420,44 L418,40 L416,36 L414,32 L412,28 L410,24 L408,20 L406,24 L404,28 L402,32 L400,36 L398,40 L396,44 L394,48 L392,44 L390,40 L388,36 L386,32 L384,28 L382,24 L380,20 L378,24 L376,28 L374,32 L372,36 L370,40 L368,44 L366,48 L364,44 L362,40 L360,36 L358,32 L356,28 L354,24 L352,20 L350,24 L348,28 L346,32 L344,36 L342,40 L340,44 L338,48 L336,44 L334,40 L332,36 L330,32 L328,28 L326,24 L324,20 L322,24 L320,28 L318,32 L316,36 L314,40 L312,44 L310,48 L308,44 L306,40 L304,36 L302,32 L300,28 L298,24 L296,20 L294,24 L292,28 L290,32 L288,36 L286,40 L284,44 L282,48 L280,44 L278,40 L276,36 L274,32 L272,28 L270,24 L268,20 L266,24 L264,28 L262,32 L260,36 L258,40 L256,44 L254,48 L252,44 L250,40 L248,36 L246,32 L244,28 L242,24 L240,20 L238,24 L236,28 L234,32 L232,36 L230,40 L228,44 L226,48 L224,44 L222,40 L220,36 L218,32 L216,28 L214,24 L212,20 L210,24 L208,28 L206,32 L204,36 L202,40 L200,44 L198,48 L196,44 L194,40 L192,36 L190,32 L188,28 L186,24 L184,20 L182,24 L180,28 L178,32 L176,36 L174,40 L172,44 L170,48 L168,44 L166,40 L164,36 L162,32 L160,28 L158,24 L156,20 L154,24 L152,28 L150,32 L148,36 L146,40 L144,44 L142,48 L140,44 L138,40 L136,36 L134,32 L132,28 L130,24 L128,20 L126,24 L124,28 L122,32 L120,36 L118,40 L116,44 L114,48 L112,44 L110,40 L108,36 L106,32 L104,28 L102,24 L100,20 L98,24 L96,28 L94,32 L92,36 L90,40 L88,44 L86,48 L84,44 L82,40 L80,36 L78,32 L76,28 L74,24 L72,20 L70,24 L68,28 L66,32 L64,36 L62,40 L60,44 L58,48 L56,44 L54,40 L52,36 L50,32 L48,28 L46,24 L44,20 L42,24 L40,28 L38,32 L36,36 L34,40 L32,44 L30,48 L28,44 L26,40 L24,36 L22,32 L20,28 L18,24 L16,20 L14,24 L12,28 L10,32 L8,36 L6,40 L4,44 L2,48 L1,52 L3,56 L7,58 Q10,58 12,56 L14,52 L16,48 L18,52 L20,56 L22,60" stroke="#6A615B" stroke-width="1.5" fill="var(--bg-light)" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"></path>
+      <circle cx="22" cy="60" r="3" fill="#C98B52" opacity="0.6"></circle>
+      <path d="M19,58 L22,60 L25,58 M22,57 L22,63" stroke="#C98B52" stroke-width="1" fill="var(--bg-light)" stroke-linecap="round" opacity="0.6"></path>
+    </svg>
+  </div>
+  
+  <div class="gradient-fade-wrapper"></div>
+</section>
+
+<section class="home-testimonials-section" data-layout-spec="Home-testimonials">
+  <div class="home-testimonials-container">
+    <div class="home-testimonials-intro">
+      <h2>Gentle wins count.</h2>
+      <p>Artists use unfold to restart—without the pressure to be impressive.</p>
+    </div>
+    <div class="home-testimonials-grid">
+      <div class="home-testimonials-card">
+        <p class="home-testimonials-quote">"I stopped waiting to feel 'inspired' and started making small pages again."</p>
+        <p class="home-testimonials-attribution">— Maya, Illustrator</p>
+      </div>
+      <div class="home-testimonials-card">
+        <p class="home-testimonials-quote">"Seeing other interpretations made me feel curious instead of stuck."</p>
+        <p class="home-testimonials-attribution">— Jordan, Designer</p>
+      </div>
+      <div class="home-testimonials-card">
+        <p class="home-testimonials-quote">"It's the first art space that doesn't ask me to keep up."</p>
+        <p class="home-testimonials-attribution">— Sam, Painter</p>
+      </div>
+    </div>
+  </div>
+  <div class="home-testimonials-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 L0,30 Q100,20 200,30 T400,30 Q500,20 600,30 T800,30 Q900,20 1000,30 T1200,30 L1200,60 Z" fill="var(--bg-light)"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="home-cta-section" data-layout-spec="Home-cta">
+  <div class="home-cta-container">
+    <div class="home-cta-backplate" aria-hidden="true"></div>
+    <div class="home-cta-card">
+      <h2>Ready for your next page?</h2>
+      <p>If you're burnt out, you're not broken. Start with one prompt and a kinder pace.</p>
+      <a href="/contact" class="btn-primary btn-pill">Contact us</a>
+      <svg class="home-cta-leaf-doodle" data-no-icon-edit="true" aria-hidden="true" width="48" height="52" viewBox="0 0 48 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 2C24 2 8 12 8 28C8 38 14 48 24 50C34 48 40 38 40 28C40 12 24 2 24 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.4"></path>
+        <path d="M24 2C24 2 18 18 24 32" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.35"></path>
+      </svg>
+    </div>
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer"><div class="footer-container"><div class="footer-top"><div class="footer-column footer-about"><img src="/assets/unfold-creative-tools-and-community-platform-logo.webp" alt="unfold" class="logo" /><p class="footer-tagline">Unleash your creativity with powerful tools and a vibrant community of artists and designers.</p></div><div class="footer-column footer-links"><h3 class="footer-heading">Quick Links</h3><ul class="footer-nav"><li><a href="/sketchbook">Sketchbook</a></li><li><a href="/community">Community</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="footer-column footer-contact"><h3 class="footer-heading">Get in Touch</h3><ul class="footer-contact-list"><li><i class="fas fa-envelope"></i><a href="mailto:[business_email]">[business_email]</a></li><li><i class="fas fa-phone"></i><a href="tel:[business_phone]">[business_phone]</a></li><li><a href="/"><i class="fas fa-map-marker-alt"></i><span>[business_address]</span></a></li></ul></div><div class="footer-column footer-social"><h3 class="footer-heading">Connect</h3><div class="social-links"><a href="[facebook_handle]" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="[instagram_handle]" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="[whatsapp_handle]" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></div></div></div><div class="footer-bottom"><div class="footer-bottom-left"><p class="copyright">© 2026 unfold. All rights reserved.</p></div><div class="footer-bottom-right"><ul class="legal-links"><li><a href="/privacy">Privacy Policy</a></li><li><a href="/terms">Terms &amp; Conditions</a></li><li><a href="/accessibility">Accessibility</a></li></ul><a href="https://zappy5.com" target="_blank" class="zappy-attribution">Generated by Zappy</a></div></div></div></footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+</body>
+</html>

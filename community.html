@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>Join a Judgment-Free Artist Community — unfold</title>
+    <meta name="description" content="See how artists worldwide interpret the same prompts. Share your work, discover endless perspectives, and celebrate creativity in our supportive mobile community app.">
+    <meta name="keywords" content="artist community app, creative community platform, unfold, supportive art community, share artwork online">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: '6a65a341-9921-4c4f-8017-22b94661db89',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="Join a Judgment-Free Artist Community — unfold">
+  <meta property="og:description" content="See how artists worldwide interpret the same prompts. Share your work, discover endless perspectives, and celebrate creativity in our supportive mobile community app.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Join a Judgment-Free Artist Community — unfold">
+  <meta name="twitter:description" content="See how artists worldwide interpret the same prompts. Share your work, discover endless perspectives, and celebrate creativity in our supportive mobile community app.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: #333 !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))), .sub-menu:not(:has(li)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .sub-menu.mobile-expanded { max-height: 500px !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-dark) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-dark) !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-dark) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      #mic-access-tool-general-button, .mic-access-tool-general-button,
+      #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+      ._access-icon, #mic-access-tool-box, .mic-access-tool-box,
+      #mic-init-access-tool #mic-access-tool-box, div[id*="mic-access-tool-box"], ._access-menu {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
+      }
+    </style>
+</head>
+<body>
+
+  <nav class="navbar">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+  
+  <button class="phone-header-btn" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+  
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link">
+        <img src="/assets/unfold-creative-tools-and-community-platform-logo.webp" alt="unfold" class="logo" />
+      </a>
+    </div>
+    
+    <ul class="nav-menu" id="navMenu"><li><a href="/sketchbook">Sketchbook</a></li><li><a href="/community">Community</a></li></ul>
+    
+    <div class="nav-cta-container">
+      <a href="/contact" class="nav-cta-btn">Contact</a>
+    </div>
+  </div>
+</nav>
+  
+  <main>
+    <section class="community-banner-section" data-layout-spec="Community-banner">
+  <div class="community-banner-container">
+    <div class="community-banner-content">
+      <svg class="community-banner-doodle-star" data-no-icon-edit="true" aria-hidden="true" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L18.5 13.5L28 16L18.5 18.5L16 30L13.5 18.5L4 16L13.5 13.5L16 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      <h1>A community for every interpretation.</h1>
+      <p>Explore the same prompt through many artists' eyes—curiosity replaces comparison.</p>
+      <h3>Judgment-free by design.</h3>
+      <p>The focus is on showing up and sharing process, not chasing trends.</p>
+    </div>
+    <div class="community-banner-imagery">
+      <div class="community-banner-device-mock">
+        <img data-placeholder="community-banner-image-1" data-context="Mobile app screen showing a creative community feed for artists: display multiple interpretations of the same creative prompt in a clean vertical feed layout. Each post shows a different artist artwork (watercolor sketches, doodles, illustrations) with soft cream backgrounds. The interface should feel warm, supportive, and judgment-free with gentle rounded corners, soft shadows, and a cozy storybook aesthetic. Include subtle UI elements like heart icons and comment bubbles. The overall mood is encouraging and safe, like browsing a magical sketchbook filled with diverse creative interpretations." width="600" height="800" src="/assets/site-community-banner-image-1.webp" alt="unfold community app showing diverse artistic interpretations of the same prompt">
+      </div>
+    </div>
+  </div>
+  <div class="community-banner-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 L0,30 Q100,28 200,32 T400,30 Q500,34 600,28 T800,32 Q900,30 1000,34 T1200,30 L1200,60 Z" fill="var(--bg-light)"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="community-gallery-section" data-layout-spec="Community-gallery">
+  <div class="community-gallery-container">
+    <div class="community-gallery-intro">
+      <h2>One prompt, many worlds.</h2>
+      <p>Discover how differently the same starting point can unfold. Each artist brings their own voice, style, and story to the same creative prompt—proof that there's no single "right" way to create.</p>
+    </div>
+
+    <div class="community-gallery-grid">
+      <div class="community-gallery-tile">
+        <div class="community-gallery-image-wrapper">
+          <img data-placeholder="community-gallery-image-1" data-context="A soft watercolor abstract response to a creative prompt, featuring gentle flowing shapes in pastel pinks, sage greens, and warm cream tones, painted on textured cream paper with visible paper grain, photographed from above with natural lighting casting soft shadows, dreamy and ethereal artistic interpretation" width="600" height="400" src="/assets/site-community-gallery-image-1.webp" alt="Soft watercolor abstract interpretation">
+        </div>
+        <div class="community-gallery-caption">
+          <p class="community-gallery-caption-title">Soft watercolor abstract response</p>
+          <p class="community-gallery-caption-context">Flowing shapes and gentle color washes capture a moment of calm.</p>
+        </div>
+      </div>
+
+      <div class="community-gallery-tile">
+        <div class="community-gallery-image-wrapper">
+          <img data-placeholder="community-gallery-image-2" data-context="A tiny character sketch response to a creative prompt, featuring a small whimsical hand-drawn character with expressive features, done in black ink with subtle colored pencil accents on cream sketchbook paper, photographed from above showing the full page with natural shadows, charming and playful artistic interpretation" width="600" height="400" src="/assets/site-community-gallery-image-2.webp" alt="Tiny character sketch interpretation">
+        </div>
+        <div class="community-gallery-caption">
+          <p class="community-gallery-caption-title">Tiny character sketch response</p>
+          <p class="community-gallery-caption-context">A small friend emerges from simple lines and gentle personality.</p>
+        </div>
+      </div>
+
+      <div class="community-gallery-tile">
+        <div class="community-gallery-image-wrapper">
+          <img data-placeholder="community-gallery-image-3" data-context="A collage and ink response to a creative prompt, featuring mixed media with torn paper pieces, delicate ink line drawings, and layered textures on cream paper, photographed from above with natural lighting showing dimensional layers and shadows, creative and experimental artistic interpretation" width="600" height="400" src="/assets/site-community-gallery-image-3.webp" alt="Collage and ink interpretation">
+        </div>
+        <div class="community-gallery-caption">
+          <p class="community-gallery-caption-title">Collage + ink response</p>
+          <p class="community-gallery-caption-context">Layered textures and found materials create unexpected depth.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Implementation note: Tiles can optionally trigger a modal lightbox on click for larger views, but function perfectly as static content without JavaScript. The lightbox would be a separate component added by the page builder. -->
+  </div>
+
+  <div class="community-gallery-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 L0,48 Q10,46 20,48 T40,47 Q50,49 60,46 T80,48 Q90,47 100,49 T120,46 Q130,48 140,47 T160,49 Q170,46 180,48 T200,47 Q210,49 220,46 T240,48 Q250,47 260,49 T280,46 Q290,48 300,47 T320,49 Q330,46 340,48 T360,47 Q370,49 380,46 T400,48 Q410,47 420,49 T440,46 Q450,48 460,47 T480,49 Q490,46 500,48 T520,47 Q530,49 540,46 T560,48 Q570,47 580,49 T600,46 Q610,48 620,47 T640,49 Q650,46 660,48 T680,47 Q690,49 700,46 T720,48 Q730,47 740,49 T760,46 Q770,48 780,47 T800,49 Q810,46 820,48 T840,47 Q850,49 860,46 T880,48 Q890,47 900,49 T920,46 Q930,48 940,47 T960,49 Q970,46 980,48 T1000,47 Q1010,49 1020,46 T1040,48 Q1050,47 1060,49 T1080,46 Q1090,48 1100,47 T1120,49 Q1130,46 1140,48 T1160,47 Q1170,49 1180,46 T1200,48 L1200,60 Z" fill="var(--bg-light)" stroke="var(--border-dark)" stroke-width="0.5"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="community-values-section" data-layout-spec="Community-values">
+  <div class="community-values-container">
+    <div class="community-values-header">
+      <h2>What this space protects.</h2>
+      <p>The goal is creative safety—so your spark can come back.</p>
+    </div>
+    
+    <div class="community-values-grid">
+      <div class="community-values-card">
+        <h3>Gentle feedback culture.</h3>
+        <p>Encourage effort, process, and play—no harsh critique.</p>
+      </div>
+      
+      <div class="community-values-card">
+        <h3>No performance pressure.</h3>
+        <p>You're not building a brand here; you're rebuilding your relationship with art.</p>
+      </div>
+      
+      <div class="community-values-card">
+        <h3>Small steps are real steps.</h3>
+        <p>A few marks can be a meaningful day.</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="community-values-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,120 L0,45 Q100,38 200,48 T400,42 Q500,50 600,45 T800,52 Q900,46 1000,54 T1200,48 L1200,120 Z" fill="var(--bg-light)"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="community-cta-section" data-layout-spec="Community-cta">
+  <div class="community-cta-container">
+    <div class="community-cta-content">
+      <h2>Want to bring unfold to your artists?</h2>
+      <p>Reach out to learn how unfold supports creative recovery through prompts and community.</p>
+      <div class="community-cta-buttons">
+        <a href="/contact" class="btn-primary">Contact us</a>
+        <a href="/contact" class="btn-secondary">Ask a question</a>
+      </div>
+    </div>
+    <div class="community-cta-scrap" aria-hidden="true"></div>
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer"><div class="footer-container"><div class="footer-top"><div class="footer-column footer-about"><img src="/assets/unfold-creative-tools-and-community-platform-logo.webp" alt="unfold" class="logo" /><p class="footer-tagline">Unleash your creativity with powerful tools and a vibrant community of artists and designers.</p></div><div class="footer-column footer-links"><h3 class="footer-heading">Quick Links</h3><ul class="footer-nav"><li><a href="/sketchbook">Sketchbook</a></li><li><a href="/community">Community</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="footer-column footer-contact"><h3 class="footer-heading">Get in Touch</h3><ul class="footer-contact-list"><li><i class="fas fa-envelope"></i><a href="mailto:[business_email]">[business_email]</a></li><li><i class="fas fa-phone"></i><a href="tel:[business_phone]">[business_phone]</a></li><li><a href="/"><i class="fas fa-map-marker-alt"></i><span>[business_address]</span></a></li></ul></div><div class="footer-column footer-social"><h3 class="footer-heading">Connect</h3><div class="social-links"><a href="[facebook_handle]" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="[instagram_handle]" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="[whatsapp_handle]" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></div></div></div><div class="footer-bottom"><div class="footer-bottom-left"><p class="copyright">© 2026 unfold. All rights reserved.</p></div><div class="footer-bottom-right"><ul class="legal-links"><li><a href="/privacy">Privacy Policy</a></li><li><a href="/terms">Terms &amp; Conditions</a></li><li><a href="/accessibility">Accessibility</a></li></ul><a href="https://zappy5.com" target="_blank" class="zappy-attribution">Generated by Zappy</a></div></div></div></footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+</body>
+</html>

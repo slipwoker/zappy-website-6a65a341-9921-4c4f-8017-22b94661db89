@@ -1,0 +1,47 @@
+# Business — Generative Engine Optimization Map
+
+---
+
+## Pages
+
+### Home
+https://example.com
+Break free from creative burnout with unfold—a magical sketchbook and community app. Explore prompts, share your art, and find inspiration in a judgment-free sanctuary.
+
+### Sketchbook
+https://example.com/sketchbook
+Every page sparks possibility. Our hand-drawn sketchbook features unique creative prompts designed to reignite your artistic passion without pressure or trends.
+
+### Community
+https://example.com/community
+See how artists worldwide interpret the same prompts. Share your work, discover endless perspectives, and celebrate creativity in our supportive mobile community app.
+
+### Contact
+https://example.com/contact
+Questions about unfold? Want to join our creative movement? Reach out to our team and discover how we can help you overcome creative burnout together.
+
+## Legal & Policy
+
+### Privacy Policy
+https://example.com/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://example.com/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://example.com/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+# Business Context (for LLM understanding)
+
+## About Business
+---
+
+# Additional Resources
+
+- **Sitemap**: https://example.com/sitemap.xml
+- **Robots.txt**: https://example.com/robots.txt
